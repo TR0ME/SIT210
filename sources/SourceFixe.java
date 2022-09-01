@@ -4,7 +4,7 @@ import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConformeException;
 
-public class SourceFixe extends Source {
+public class SourceFixe extends Source<Boolean> {
 
 
 	public SourceFixe() {

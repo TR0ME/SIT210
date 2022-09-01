@@ -6,7 +6,7 @@ import information.InformationNonConformeException;
 import java.math.*;
 import java.util.*;
 
-public class SourceAleatoire extends Source {
+public class SourceAleatoire extends Source<Boolean> {
 	/**
 	 * Création du constructeur pour un message random
 	 * Taille du message comprise entre 0 et 1000
@@ -23,6 +23,7 @@ public class SourceAleatoire extends Source {
 			informationGeneree.add(genererbool(rand));
 		}
 	}
+	
 	public SourceAleatoire(int taille) {
 		rand = new Random();
 		informationGeneree = new Information<Boolean>();

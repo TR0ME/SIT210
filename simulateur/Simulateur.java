@@ -77,8 +77,12 @@ public class Simulateur {
 		if(affichage == true) {
 			source.connecter(new SondeLogique("Source", 200));
 		}
+		source.connecter(new SondeLogique("Source", 200));
+		destination = new DestinationFinale();
+    	transmetteurLogique = new TransmetteurParfait();
+    	source.connecter(transmetteurLogique);
 		
-		source.emettre();
+		transmetteurLogique.connecter(new SondeLogique("Destination", 200));
       	// TODO : Partie à compléter
       		
     }
@@ -163,15 +167,12 @@ public class Simulateur {
      *
      */ 
     public void execute() throws Exception { 
+    	
     	source.emettre();
-    	destination = new DestinationFinale();
-    	transmetteurLogique = new TransmetteurParfait();
     	transmetteurLogique.recevoir(source.getInformationEmise());
     	transmetteurLogique.connecter(destination);
-    	transmetteurLogique.emettre();
+    	//transmetteurLogique.emettre();
     	destination.recevoir(transmetteurLogique.getInformationEmise());
-    	
-    	
     	// TODO : typiquement source.emettre(); 
       	     	      
     }
@@ -186,8 +187,8 @@ public class Simulateur {
     public float  calculTauxErreurBinaire() {
 
     	// TODO : A compléter
-    	Information src = source.getInformationEmise();
-    	Information dst = destination.getInformationRecue();
+    	//Information src = source.getInformationEmise();
+    	//Information dst = destination.getInformationRecue();
     	int nbErreurs = 0;
     	for(int i = 0; i<source.getInformationEmise().nbElements();i++) {
     		if(source.getInformationEmise().iemeElement(i) != destination.getInformationRecue().iemeElement(i)) {
@@ -195,7 +196,7 @@ public class Simulateur {
     		}
     	}
     	
-    	return  nbErreurs/src.nbElements();
+    	return  nbErreurs/source.getInformationEmise().nbElements();
     }
    
    
