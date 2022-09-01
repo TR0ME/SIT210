@@ -1,7 +1,12 @@
 package simulateur;
 import destinations.Destination;
-import sources.Source;
+import destinations.DestinationFinale;
+import sources.*;
+import visualisations.*;
 import transmetteurs.Transmetteur;
+import transmetteurs.TransmetteurParfait;
+import information.*;
+import java.util.regex.*;
 
 
 /** La classe Simulateur permet de construire et simuler une chaîne de
@@ -23,7 +28,7 @@ public class Simulateur {
     private boolean aleatoireAvecGerme = false;
     
     /** la valeur de la semence utilisée pour les générateurs aléatoires */
-    private Integer seed = null; // pas de semence par défaut
+    private Long seed = null; // pas de semence par défaut
     
     /** la longueur du message aléatoire à transmettre si un message n'est pas imposé */
     private int nbBitsMess = 100; 
@@ -40,6 +45,8 @@ public class Simulateur {
     
     /** le  composant Destination de la chaine de transmission */
     private Destination <Boolean>  destination = null;
+    
+    private String messageEmmettre = "";
    	
    
     /** Le constructeur de Simulateur construit une chaîne de
@@ -51,12 +58,27 @@ public class Simulateur {
      * @param args le tableau des différents arguments.
      *
      * @throws ArgumentsException si un des arguments est incorrect
+     * @throws InformationNonConformeException 
      *
      */   
-    public  Simulateur(String [] args) throws ArgumentsException {
+    public  Simulateur(String [] args) throws ArgumentsException, InformationNonConformeException {
     	// analyser et récupérer les arguments   	
     	analyseArguments(args);
-      
+    	if (messageAleatoire == true) {
+    		if (aleatoireAvecGerme == true) {
+    			source = new SourceAleatoire(nbBitsMess, seed);
+    		}else {
+    			source = new SourceAleatoire(nbBitsMess);
+    		}
+    		
+    	}else {
+    		source = new SourceFixe(messageEmmettre);
+    	}
+		if(affichage == true) {
+			source.connecter(new SondeLogique("Source", 200));
+		}
+		
+		source.emettre();
       	// TODO : Partie à compléter
       		
     }
@@ -94,7 +116,7 @@ public class Simulateur {
     			i++; 
     			// traiter la valeur associee
     			try { 
-    				seed = Integer.valueOf(args[i]);
+    				seed = Long.valueOf(args[i]);
     			}
     			catch (Exception e) {
     				throw new ArgumentsException("Valeur du parametre -seed  invalide :" + args[i]);
@@ -105,9 +127,15 @@ public class Simulateur {
     			i++; 
     			// traiter la valeur associee
     			messageString = args[i];
-    			if (args[i].matches("[0,1]{7,}")) { // au moins 7 digits
+    			if (args[i].matches("([0,1]{7,})")) { // au moins 7 digits
+    				Pattern p = Pattern.compile("([0,1]{7,})");
+    				Matcher m = p.matcher(args[i]);
+    				while(m.find()) {
+    					messageEmmettre = args[i].substring(m.start(), m.end());
+    				}
     				messageAleatoire = false;
     				nbBitsMess = args[i].length();
+    				
     			} 
     			else if (args[i].matches("[0-9]{1,6}")) { // de 1 à 6 chiffres
     				messageAleatoire = true;
@@ -134,8 +162,16 @@ public class Simulateur {
      * @throws Exception si un problème survient lors de l'exécution
      *
      */ 
-    public void execute() throws Exception {      
-         
+    public void execute() throws Exception { 
+    	source.emettre();
+    	destination = new DestinationFinale();
+    	transmetteurLogique = new TransmetteurParfait();
+    	transmetteurLogique.recevoir(source.getInformationEmise());
+    	transmetteurLogique.connecter(destination);
+    	transmetteurLogique.emettre();
+    	destination.recevoir(transmetteurLogique.getInformationEmise());
+    	
+    	
     	// TODO : typiquement source.emettre(); 
       	     	      
     }
@@ -150,8 +186,16 @@ public class Simulateur {
     public float  calculTauxErreurBinaire() {
 
     	// TODO : A compléter
-
-    	return  0.0f;
+    	Information src = source.getInformationEmise();
+    	Information dst = destination.getInformationRecue();
+    	int nbErreurs = 0;
+    	for(int i = 0; i<source.getInformationEmise().nbElements();i++) {
+    		if(source.getInformationEmise().iemeElement(i) != destination.getInformationRecue().iemeElement(i)) {
+    			nbErreurs++;
+    		}
+    	}
+    	
+    	return  nbErreurs/src.nbElements();
     }
    
    
