@@ -32,9 +32,12 @@ public class SourceAleatoire extends Source<Boolean> {
 		}
 	}
 	
-	public SourceAleatoire(int nbBitsMess, Long seed) {
+	public SourceAleatoire(int taille, Long seed) {
 		rand = new Random(seed);
-		
+		informationGeneree = new Information<Boolean>();
+		for (int i = 0; i < taille; i++) {
+			informationGeneree.add(genererbool(rand));
+		}
 	}
 	
 	

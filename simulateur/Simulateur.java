@@ -65,25 +65,18 @@ public class Simulateur {
     	// analyser et rÃ©cupÃ©rer les arguments   	
     	analyseArguments(args);
     	if (messageAleatoire == true) {
+    		// Partie avec message aléatoire
     		if (aleatoireAvecGerme == true) {
+    			//Partie avec seed
     			source = new SourceAleatoire(nbBitsMess, seed);
     		}else {
+    			//Partie avec taille du message déterminée
     			source = new SourceAleatoire(nbBitsMess);
     		}
-    		
     	}else {
+    		//Partie avec message déterminé
     		source = new SourceFixe(messageEmmettre);
     	}
-		if(affichage == true) {
-			source.connecter(new SondeLogique("Source", 200));
-		}
-		source.connecter(new SondeLogique("Source", 200));
-		destination = new DestinationFinale();
-    	transmetteurLogique = new TransmetteurParfait();
-    	source.connecter(transmetteurLogique);
-		
-		transmetteurLogique.connecter(new SondeLogique("Destination", 200));
-      	// TODO : Partie Ã  complÃ©ter
       		
     }
    
@@ -167,14 +160,33 @@ public class Simulateur {
      *
      */ 
     public void execute() throws Exception { 
-    	
-    	source.emettre();
+    	//Connexion des différents éléments de la chaine de transmission
+    	connecter();
+    	source.emettre(); //Emission des informations
     	transmetteurLogique.recevoir(source.getInformationEmise());
-    	transmetteurLogique.connecter(destination);
-    	//transmetteurLogique.emettre();
     	destination.recevoir(transmetteurLogique.getInformationEmise());
-    	// TODO : typiquement source.emettre(); 
       	     	      
+    }
+    
+    /**
+     * La méthode qui permet de connecter les différents éléments de la chaine de transmission 
+     * Instancie les variables destination et transmetteur
+     * Ajoute éventuellement des sondes pour observer le signal
+     */
+    public void connecter() {
+    	transmetteurLogique = new TransmetteurParfait();
+    	destination = new DestinationFinale();
+    	source.connecter(transmetteurLogique);
+    	transmetteurLogique.connecter(destination);
+    	
+    	if(affichage == true) {
+			source.connecter(new SondeLogique("Source", 200));
+			transmetteurLogique.connecter(new SondeLogique("Destination", 200));
+		}
+    	
+    	//A Supprimer
+    	source.connecter(new SondeLogique("Source", 200));
+		transmetteurLogique.connecter(new SondeLogique("Destination", 200));
     }
    
    	   	
