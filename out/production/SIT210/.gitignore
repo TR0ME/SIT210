@@ -1,5 +1,3 @@
-/simulateur/
+
+/.gitignore
 /out/
-/destinations/
-/transmetteurs/
-/sources/

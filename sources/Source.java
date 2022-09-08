@@ -53,6 +53,7 @@ public abstract class Source<T> implements SourceInterface<T> {
 	 */
 	public void connecter(DestinationInterface<T> destination) {
 		destinationsConnectees.add(destination);
+		
 	}
 
 	/**
