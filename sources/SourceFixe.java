@@ -27,15 +27,23 @@ public class SourceFixe extends Source<Boolean> {
 	}
 	
 	public SourceFixe(String message) {
-		char chare;
-		for(int i = 0; i< message.length(); i++) {
+		informationGeneree = new Information<Boolean>();
+		//char chare;
+		for(char bits : message.toCharArray()) {
+			if(bits == '1') {
+				this.informationGeneree.add(true);
+			}else {
+				this.informationGeneree.add(false);
+			}
+		}
+		/*for(int i = 0; i< message.length(); i++) {
 			chare = message.charAt(i);
 			if(Character.toString(chare).matches("1")) {
 				informationGeneree.add(true);
 			}else {
 				informationGeneree.add(false);
 			}
-		}
+		}*/
 		
 	}
 	

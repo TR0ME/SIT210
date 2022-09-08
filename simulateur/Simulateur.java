@@ -130,6 +130,7 @@ public class Simulateur {
     				while(m.find()) {
     					messageEmmettre = args[i].substring(m.start(), m.end());
     				}
+    				//System.out.println(messageEmmettre);
     				messageAleatoire = false;
     				nbBitsMess = args[i].length();
     				
@@ -162,9 +163,9 @@ public class Simulateur {
     public void execute() throws Exception { 
     	//Connexion des différents éléments de la chaine de transmission
     	connecter();
-    	source.emettre(); //Emission des informations
-    	transmetteurLogique.recevoir(source.getInformationEmise());
-    	destination.recevoir(transmetteurLogique.getInformationEmise());
+    	source.emettre(); //La source envoie le message généré
+    	//transmetteurLogique.recevoir(source.getInformationEmise()); // redondant (dans source.emettre)
+    	//destination.recevoir(transmetteurLogique.getInformationEmise());
       	     	      
     }
     
@@ -185,8 +186,8 @@ public class Simulateur {
 		}
     	
     	//A Supprimer
-    	source.connecter(new SondeLogique("Source", 200));
-		transmetteurLogique.connecter(new SondeLogique("Destination", 200));
+    	/*source.connecter(new SondeLogique("Source", 200));
+		transmetteurLogique.connecter(new SondeLogique("Destination", 200));*/
     }
    
    	   	
@@ -197,12 +198,9 @@ public class Simulateur {
      * @return  La valeur du Taux dErreur Binaire.
      */   	   
     public float  calculTauxErreurBinaire() {
-
-    	// TODO : A complÃ©ter
-    	//Information src = source.getInformationEmise();
-    	//Information dst = destination.getInformationRecue();
-    	int nbErreurs = 0;
+    	int nbErreurs = 0;//initialisation du nombre d'erreurs
     	for(int i = 0; i<source.getInformationEmise().nbElements();i++) {
+    		//comparaison du signal émis avec le signa reçu
     		if(source.getInformationEmise().iemeElement(i) != destination.getInformationRecue().iemeElement(i)) {
     			nbErreurs++;
     		}
